@@ -5,24 +5,22 @@ app = Flask("Emotion Detector")
 
 @app.route("/emotionDetector")
 def sent_analyzer():
-    # 从网页请求中获取待分析的文本 (键名为 'textToAnalyze')
     text_to_analyze = request.args.get('textToAnalyze')
-
-    # 调用之前编写的函数进行情绪检测
     response = emotion_detector(text_to_analyze)
 
-    # 提取结果中的各情绪得分和主导情绪
-    anger = response['anger']
-    disgust = response['disgust']
-    fear = response['fear']
-    joy = response['joy']
-    sadness = response['sadness']
+    # 提取主导情绪
     dominant_emotion = response['dominant_emotion']
 
-    # 按照任务要求的格式构造返回字符串
+    # --- 新增错误处理逻辑 ---
+    if dominant_emotion is None:
+        return "Invalid text! Please try again!"
+    # -----------------------
+
+    # 正常的返回逻辑
     return (
-        f"For the given statement, the system response is 'anger': {anger}, "
-        f"'disgust': {disgust}, 'fear': {fear}, 'joy': {joy} and 'sadness': {sadness}. "
+        f"For the given statement, the system response is 'anger': {response['anger']}, "
+        f"'disgust': {response['disgust']}, 'fear': {response['fear']}, "
+        f"'joy': {response['joy']} and 'sadness': {response['sadness']}. "
         f"The dominant emotion is {dominant_emotion}."
     )
 
